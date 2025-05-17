@@ -41,7 +41,7 @@ const processes: Ref<Process[]> = ref([
             <TableHead>Name</TableHead>
             <TableHead>PID</TableHead>
             <TableHead>% CPU</TableHead>
-            <TableHead>Memory</TableHead>
+            <TableHead>Memory [MB]</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
