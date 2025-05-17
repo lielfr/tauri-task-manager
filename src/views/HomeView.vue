@@ -1,5 +1,9 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TheProcessList from '@/components/the-process-list.vue'
+</script>
 
 <template>
-  <main></main>
+  <main>
+    <the-process-list></the-process-list>
+  </main>
 </template>
