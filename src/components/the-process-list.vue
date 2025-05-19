@@ -16,6 +16,8 @@ import {
   ContextMenuTrigger,
 } from '@/components/ui/context-menu'
 import { X } from 'lucide-vue-next'
+import { listen } from '@tauri-apps/api/event'
+import { invoke } from '@tauri-apps/api/core'
 
 interface Process {
   pid: number
@@ -24,14 +26,19 @@ interface Process {
   memory: number
 }
 
-const processes: Ref<Process[]> = ref([
-  {
-    pid: 1000,
-    name: 'chromium',
-    cpu: 50.0,
-    memory: 256,
-  },
-])
+interface DataPoint {
+  processes: Process[]
+}
+
+const processes: Ref<Process[]> = ref([])
+
+listen<DataPoint>('data_point', (data) => {
+  processes.value = data.payload.processes
+})
+
+const killProcess = (pid: number) => {
+  invoke('kill_process', { pid })
+}
 </script>
 
 <template>
@@ -52,7 +59,7 @@ const processes: Ref<Process[]> = ref([
         <TableBody>
           <ContextMenu v-for="process of processes" :key="process.pid">
             <ContextMenuContent class="bg-background text-foreground">
-              <ContextMenuItem class="hover:cursor-pointer">
+              <ContextMenuItem class="hover:cursor-pointer" @select="killProcess(process.pid)">
                 <X />
                 Kill Process
               </ContextMenuItem>

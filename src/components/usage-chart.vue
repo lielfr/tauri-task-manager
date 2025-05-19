@@ -28,7 +28,7 @@ const template = (d: DataRecord) => `${d.value}`
     </CardHeader>
     <CardContent>
       <VisXYContainer :data="data">
-        <VisArea :x="x" :y="y" :color="color" />
+        <VisArea :x="x" :y="y" :color="color" duration="0"/>
         <VisCrosshair :template="template" />
         <VisAxis type="x" />
         <VisAxis type="y" />
