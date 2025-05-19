@@ -18,17 +18,7 @@ import {
 import { X } from 'lucide-vue-next'
 import { listen } from '@tauri-apps/api/event'
 import { invoke } from '@tauri-apps/api/core'
-
-interface Process {
-  pid: number
-  name: string
-  cpu: number
-  memory: number
-}
-
-interface DataPoint {
-  processes: Process[]
-}
+import type { DataPoint, Process } from '@/lib/interfaces.ts'
 
 const processes: Ref<Process[]> = ref([])
 

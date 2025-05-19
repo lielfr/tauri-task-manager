@@ -3,6 +3,8 @@ use std::time::SystemTime;
 use sysinfo::{ProcessesToUpdate, System};
 use tauri::Emitter;
 
+const BYTES_TO_MB: u64 = 1024 * 1024;
+
 #[derive(Serialize, Clone)]
 struct DataPoint {
     timestamp: f32,
@@ -40,14 +42,16 @@ pub fn run() {
                     sys.refresh_memory();
                     sys.refresh_processes(ProcessesToUpdate::All, true);
 
-                    let mut processes: Vec<_> = sys.processes().iter().map(|(pid, proc)| {
-                        Process {
+                    let mut processes: Vec<_> = sys
+                        .processes()
+                        .iter()
+                        .map(|(pid, proc)| Process {
                             pid: pid.as_u32(),
                             name: proc.name().to_string_lossy().to_string(),
                             cpu: proc.cpu_usage() * 100.0,
-                            memory: proc.memory() / 1024 / 1024,
-                        }
-                    }).collect();
+                            memory: proc.memory() / BYTES_TO_MB,
+                        })
+                        .collect();
 
                     processes.sort_by_key(|p| p.name.clone());
 
@@ -57,8 +61,8 @@ pub fn run() {
                             .unwrap()
                             .as_secs_f32(),
                         cpu_usage: sys.global_cpu_usage(),
-                        memory: sys.used_memory() / 1024 / 1024,
-                        processes
+                        memory: sys.used_memory() / BYTES_TO_MB,
+                        processes,
                     };
                     handle.emit("data_point", data_point).unwrap();
 
@@ -75,8 +79,8 @@ pub fn run() {
 
 #[tauri::command]
 fn kill_process(pid: u32) {
-    let sys = sysinfo::System::new_all();
-    if let Some(proc) = sys.process(sysinfo::Pid::from_u32(pid as u32)) {
+    let sys = System::new_all();
+    if let Some(proc) = sys.process(sysinfo::Pid::from_u32(pid)) {
         proc.kill();
     }
 }

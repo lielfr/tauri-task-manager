@@ -3,20 +3,10 @@ import TheProcessList from '@/components/the-process-list.vue'
 import UsageChart from '@/components/usage-chart.vue'
 import { listen } from '@tauri-apps/api/event'
 import { type Ref, ref } from 'vue'
+import type { DataPoint, DataRecord } from '@/lib/interfaces.ts'
 
 const cpuData: Ref<DataRecord[]> = ref([])
 const memoryData: Ref<DataRecord[]> = ref([])
-
-interface DataPoint {
-  timestamp: number,
-  cpu_usage: number,
-  memory: number,
-}
-
-interface DataRecord {
-  time: number
-  value: number
-}
 
 listen<DataPoint>('data_point', (data) => {
   cpuData.value.push({
